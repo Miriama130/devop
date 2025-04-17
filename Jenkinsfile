@@ -16,7 +16,7 @@ pipeline {
             steps {
                 git branch: 'Mariemtl-clean',
                     credentialsId: 'TOKEN',
-                    url: 'https://github.com/Miriama130/devops.git'
+                    url: 'https://github.com/Miriama130/devop.git'
             }
 }
 
