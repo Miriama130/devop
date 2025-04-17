@@ -12,12 +12,21 @@ pipeline {
     }
 
     stages {
-        stage('Checkout Code') {
+          stage('Clean Workspace') {
             steps {
-                git branch: 'Mariemtl-clean',
-                    credentialsId: 'TOKEN',
-                    url: 'https://github.com/Miriama130/devop.git'
+                cleanWs()
             }
+        }
+       stage('Checkout Code') {
+         
+    steps {
+        git branch: 'Mariemtl-clean',
+            credentialsId: 'TOKEN',
+            url: 'https://github.com/Miriama130/devop.git',
+            extensions: [[$class: 'GitLFSPull'], [$class: 'CloneOption', depth: 1, noTags: true, shallow: true]],
+            config: ['http.postBuffer': '524288000'] // Augmente la taille du buffer
+        
+    }
 }
 
         stage('Clean Docker Environment') {
