@@ -11,67 +11,33 @@ pipeline {
         ARTIFACT_PATH = "tn/esprit/spring/${ARTIFACT_NAME}/${ARTIFACT_VERSION}/${ARTIFACT_NAME}-${ARTIFACT_VERSION}.jar"
     }
 
-    stages {
-        stage('Nettoyer Workspace') {
-            steps {
-                cleanWs()
-                sh 'rm -rf .git || true'
-            }
-        }
-
+  stages {
         stage('Checkout Code') {
             steps {
-                script {
-                    try {
-                        retry(3) {
-                            checkout([
-                                $class: 'GitSCM',
-                                branches: [[name: 'Mariemtl-clean']],
-                                userRemoteConfigs: [[
-                                    url: 'https://github.com/Miriama130/devop.git',
-                                    credentialsId: 'TOKEN',
-                                    timeout: 30
-                                ]],
-                                extensions: [
-                                    [$class: 'CloneOption', 
-                                     depth: 1, 
-                                     noTags: true, 
-                                     shallow: true,
-                                     timeout: 60],
-                                    [$class: 'CleanBeforeCheckout'],
-                                    [$class: 'LocalBranch', localBranch: 'Mariemtl-clean']
-                                ],
-                                gitTool: 'Default'
-                            ])
-                        }
-                    } catch (Exception e) {
-                        echo "Échec du checkout standard, tentative de réparation Git..."
-                        sh '''
-                            rm -rf *
-                            git init
-                            git remote add origin https://github.com/Miriama130/devop.git
-                            git config --global http.postBuffer 524288000
-                            git config --global http.sslVerify false
-                            git fetch --depth=1 origin Mariemtl-clean
-                            git checkout Mariemtl-clean
-                        '''
-                    }
-                }
-                
-                sh 'git lfs pull || true'
+                git branch: 'Mariemtl-clean',
+                    credentialsId: 'TOKEN',
+                    url: 'https://github.com/Miriama130/devops.git'
             }
-        }
+}
 
         stage('Clean Docker Environment') {
-            steps {
-                sh '''
-                    docker-compose -f docker-compose.yml down --remove-orphans --volumes || true
-                    docker rm -f spring-foyer mysql-container || true
-                    docker rmi -f ${DOCKER_IMAGE}:${DOCKER_TAG} || true
-                    docker system prune -f
-                '''
-            }
-        }
+    steps {
+        sh '''
+            # Stop and remove all containers from the compose file
+            docker-compose -f docker-compose.yml down --remove-orphans --volumes || true
+            
+            # Remove specific containers by name if they still exist
+            docker rm -f spring-foyer mysql-container || true
+            
+            # Remove old images
+            docker rmi -f ${DOCKER_IMAGE}:${DOCKER_TAG} || true
+            
+            # Clean up any dangling resources
+            docker system prune -f
+        '''
+    }
+}
+
 
         stage('Build & Test') {
             steps {
@@ -136,7 +102,7 @@ pipeline {
                 script {
                     sh 'ls -l target/*.jar'
                     sh "docker build -t ${DOCKER_IMAGE}:${DOCKER_TAG} ."
-                    sh "docker images | grep ${DOCKER_IMAGE}"
+                    sh 'docker images | grep ${DOCKER_IMAGE}'
                 }
             }
         }
@@ -158,26 +124,27 @@ pipeline {
         stage('Prepare Ports') {
             steps {
                 script {
+                    // Just ensure no containers are using the ports
                     sh 'docker-compose -f docker-compose.yml down || true'
+                    
+                    // Clean up any existing volumes if needed
                     sh 'docker volume rm dockerimage_mysql_data || true'
                 }
             }
         }
+
+       
     }
 
     post {
         success {
-            echo "Pipeline exécuté avec succès!"
-            echo "Artéfacts déployés sur Nexus: ${NEXUS_URL}"
-            echo "Image Docker: ${DOCKER_IMAGE}:${DOCKER_TAG}"
-            echo "Application disponible à: http://172.20.99.98:8082/Foyer"
+            echo "Pipeline executed successfully!"
+            echo "Artifacts deployed to Nexus: ${NEXUS_URL}"
+            echo "Docker Image: ${DOCKER_IMAGE}:${DOCKER_TAG}"
+            echo "Application deployed at: http://172.20.99.98:8082/Foyer"
         }
         failure {
-            echo "Échec du pipeline. Vérifiez les logs pour les erreurs."
-            echo "Problèmes possibles:"
-            echo "1. Problèmes de connexion Git"
-            echo "2. Échec des tests ou build Maven"
-            echo "3. Problèmes d'authentification Docker/Nexus"
+            echo "Pipeline failed. Check the logs for errors."
         }
     }
 }
