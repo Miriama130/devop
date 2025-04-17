@@ -3,148 +3,86 @@ pipeline {
 
     environment {
         DOCKER_IMAGE = 'miriama13/foyer-app'
-        DOCKER_TAG = 'latest'
-        SONARQUBE_URL = 'http://172.20.99.98:9000'
+        DOCKER_TAG = 'v1'
+        SONARQUBE_URL = 'http://172.20.99.98:9000/'
         NEXUS_URL = 'http://172.20.99.98:8081/repository/maven-releases/'
-        ARTIFACT_VERSION = "0.0.1-${BUILD_NUMBER}"
-        ARTIFACT_NAME = 'Foyer'
-        ARTIFACT_PATH = "tn/esprit/spring/${ARTIFACT_NAME}/${ARTIFACT_VERSION}/${ARTIFACT_NAME}-${ARTIFACT_VERSION}.jar"
     }
 
-  stages {
-        stage('Checkout Code') {
+    stages {
+        stage('Checkout SCM') {
             steps {
-                git branch: 'Mariemtl-clean',
-                    credentialsId: 'TOKEN',
-                    url: 'https://github.com/Miriama130/devops.git'
+                checkout scm
             }
-}
+        }
 
-        stage('Clean Docker Environment') {
-    steps {
-        sh '''
-            # Stop and remove all containers from the compose file
-            docker-compose -f docker-compose.yml down --remove-orphans --volumes || true
-            
-            # Remove specific containers by name if they still exist
-            docker rm -f spring-foyer mysql-container || true
-            
-            # Remove old images
-            docker rmi -f ${DOCKER_IMAGE}:${DOCKER_TAG} || true
-            
-            # Clean up any dangling resources
-            docker system prune -f
-        '''
-    }
-}
-
-
-        stage('Build & Test') {
+        stage('Nettoyage du projet') {
             steps {
-                sh 'mvn clean package'
+                echo '🧹 Nettoyage des fichiers temporaires...'
+                sh 'mvn clean'
+            }
+        }
+
+        stage('Compilation & Tests') {
+            steps {
+                echo '🔬 Compilation et exécution des tests...'
+                sh 'mvn test'
             }
         }
 
         stage('SonarQube Analysis') {
             steps {
-                withCredentials([string(credentialsId: 'sonarqubetoken', variable: 'SONAR_TOKEN')]) {
-                    sh '''
-                        mvn sonar:sonar \
-                        -Dsonar.projectKey=FoyerApp \
-                        -Dsonar.host.url=${SONARQUBE_URL} \
-                        -Dsonar.login=${SONAR_TOKEN}
-                    '''
-                }
-            }
-        }
-
-        stage('Deploy to Nexus') {
-            steps {
+                echo '🔍 Analyse du code avec SonarQube...'
                 script {
-                    withCredentials([usernamePassword(
-                        credentialsId: 'nexus',
-                        usernameVariable: 'NEXUS_USER',
-                        passwordVariable: 'NEXUS_PASS'
-                    )]) {
-                        sh """
-                            mvn deploy \
-                            -DaltDeploymentRepository=nexus-releases::default::${NEXUS_URL} \
-                            -DrepositoryId=nexus-releases \
-                            -s settings.xml
-                        """
+                    withCredentials([string(credentialsId: 'sonarqubetoken', variable: 'SONAR_TOKEN')]) {
+                        sh '''
+                            mvn sonar:sonar \
+                                -Dsonar.host.url=$SONARQUBE_URL \
+                                -Dsonar.login=$SONAR_TOKEN
+                        '''
                     }
                 }
             }
         }
 
-        stage('Download Artifact from Nexus') {
+        stage('Construction du livrable') {
             steps {
-                script {
-                    withCredentials([usernamePassword(
-                        credentialsId: 'nexus',
-                        usernameVariable: 'NEXUS_USER',
-                        passwordVariable: 'NEXUS_PASS'
-                    )]) {
-                        sh 'mkdir -p target'
-                        sh """
-                            curl -u ${NEXUS_USER}:${NEXUS_PASS} \
-                            -o target/${ARTIFACT_NAME}-${ARTIFACT_VERSION}.jar \
-                            "${NEXUS_URL}${ARTIFACT_PATH}"
-                        """
-                        sh 'ls -l target/'
-                    }
-                }
-            }
-        }
-
-        stage('Build Docker Image') {
-            steps {
-                script {
-                    sh 'ls -l target/*.jar'
-                    sh "docker build -t ${DOCKER_IMAGE}:${DOCKER_TAG} ."
-                    sh 'docker images | grep ${DOCKER_IMAGE}'
-                }
+                echo '🔨 Construction du livrable sans exécuter les tests...'
+                sh 'mvn package -DskipTests'
             }
         }
 
         stage('Push to Docker Hub') {
             steps {
-                withCredentials([usernamePassword(
-                    credentialsId: 'dockercredentials', 
-                    usernameVariable: 'DOCKER_USERNAME', 
-                    passwordVariable: 'DOCKER_PASSWORD'  
-                )]) {
-                    sh "echo ${DOCKER_PASSWORD} | docker login -u ${DOCKER_USERNAME} --password-stdin"
-                    sh "docker push ${DOCKER_IMAGE}:${DOCKER_TAG}"
-                    sh "docker logout"
-                }
-            }
-        }
-
-        stage('Prepare Ports') {
-            steps {
                 script {
-                    // Just ensure no containers are using the ports
-                    sh 'docker-compose -f docker-compose.yml down || true'
-                    
-                    // Clean up any existing volumes if needed
-                    sh 'docker volume rm dockerimage_mysql_data || true'
+                    withCredentials([usernamePassword(credentialsId: 'dockercredentials', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
+                        sh '''
+                            echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+                            docker tag "$DOCKER_IMAGE:latest" "$DOCKER_IMAGE:$DOCKER_TAG"
+                            docker push "$DOCKER_IMAGE:$DOCKER_TAG"
+                            docker logout
+                        '''
+                    }
                 }
             }
         }
 
-       
+      
+
+        stage('Archive artifacts') {
+            steps {
+                echo '📦 Archivage du livrable...'
+                sh 'ls -la target'  // Liste les fichiers dans le répertoire target
+                archiveArtifacts artifacts: '**/target/*.jar', allowEmptyArchive: true
+            }
+        }
     }
 
     post {
         success {
-            echo "Pipeline executed successfully!"
-            echo "Artifacts deployed to Nexus: ${NEXUS_URL}"
-            echo "Docker Image: ${DOCKER_IMAGE}:${DOCKER_TAG}"
-            echo "Application deployed at: http://172.20.99.98:8082/Foyer"
+            echo "🎉 Build, déploiement et nettoyage terminés avec succès!"
         }
         failure {
-            echo "Pipeline failed. Check the logs for errors."
+            echo "❌ Une erreur s'est produite pendant le pipeline."
         }
     }
 }
