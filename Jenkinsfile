@@ -12,24 +12,45 @@ pipeline {
     }
 
     stages {
-         stage('Clean Workspace') {
+            stage('Nettoyer Workspace') {
             steps {
                 cleanWs()
-                // Configuration Git globale
-                sh 'git config --global http.postBuffer 524288000'
+                // Suppression complète du répertoire .git si existant
+                sh 'rm -rf .git || true'
             }
         }
-        
+
         stage('Checkout Code') {
             steps {
-                git(
-                    url: 'https://github.com/Miriama130/devop.git',
-                    credentialsId: 'TOKEN',
-                    branch: 'Mariemtl-clean'
-                )
+                retry(3) {
+                    checkout([
+                        $class: 'GitSCM',
+                        branches: [[name: 'Mariemtl-clean']],
+                        userRemoteConfigs: [[
+                            url: 'https://github.com/Miriama130/devop.git',
+                            credentialsId: 'TOKEN',
+                            timeout: 30
+                        ]],
+                        extensions: [
+                            [$class: 'CloneOption', 
+                             depth: 1, 
+                             noTags: true, 
+                             shallow: true,
+                             timeout: 60],
+                            [$class: 'CleanBeforeCheckout'],
+                            [$class: 'LocalBranch', localBranch: 'Mariemtl-clean']
+                        ],
+                        gitTool: 'Default'
+                    ])
+                }
                 
-                // Si vous avez besoin de Git LFS
-                sh 'git lfs pull'
+                // Configuration Git supplémentaire
+                sh 'git config --global http.postBuffer 524288000'
+                sh 'git config --global http.sslVerify false'
+                sh 'git config --global core.compression 0'
+                
+                // Si vous utilisez Git LFS
+                sh 'git lfs pull || true'
             }
         }
 
