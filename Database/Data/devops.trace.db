@@ -1,0 +1,96 @@
+2025-02-25 11:15:42 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_BLOC" not found (this database is empty); SQL statement:
+alter table t_bloc drop foreign key FKjjwhlcwla3ys5yp36m0aqivdr [42104-214]
+2025-02-25 11:15:42 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_CHAMBRE" not found (this database is empty); SQL statement:
+alter table t_chambre drop foreign key FKhccfibngldb9t3wa06xg1qhfk [42104-214]
+2025-02-25 11:15:42 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_CHAMBRE_RESERVATIONS" not found (this database is empty); SQL statement:
+alter table t_chambre_reservations drop foreign key FKcmffjxrqi7cnh819m0fddx65h [42104-214]
+2025-02-25 11:15:42 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_CHAMBRE_RESERVATIONS" not found (this database is empty); SQL statement:
+alter table t_chambre_reservations drop foreign key FKfxbc8lgdbrm52ol9slhm11qy8 [42104-214]
+2025-02-25 11:15:42 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_RESERVATION_ETUDIANTS" not found (this database is empty); SQL statement:
+alter table t_reservation_etudiants drop foreign key FKsa01fwp72jakxi8b9soapl32w [42104-214]
+2025-02-25 11:15:42 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_RESERVATION_ETUDIANTS" not found (this database is empty); SQL statement:
+alter table t_reservation_etudiants drop foreign key FKko0c1l3ctx308jlueriyg90yc [42104-214]
+2025-02-25 11:15:42 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_UNIVERSITE" not found (this database is empty); SQL statement:
+alter table t_universite drop foreign key FKl8ocoh5hm4gvsp0sqbk4dw4gp [42104-214]
+2025-02-25 11:15:42 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Erreur de syntaxe dans l'instruction SQL "create table t_bloc (capacite_bloc bigint not null, foyer_id_foyer bigint, id_bloc bigint not null auto_increment, nom_bloc varchar(255), primary key (id_bloc)) engine[*]=InnoDB"; attendu "identifier"
+Syntax error in SQL statement "create table t_bloc (capacite_bloc bigint not null, foyer_id_foyer bigint, id_bloc bigint not null auto_increment, nom_bloc varchar(255), primary key (id_bloc)) engine[*]=InnoDB"; expected "identifier"; SQL statement:
+create table t_bloc (capacite_bloc bigint not null, foyer_id_foyer bigint, id_bloc bigint not null auto_increment, nom_bloc varchar(255), primary key (id_bloc)) engine=InnoDB [42001-214]
+2025-02-25 11:15:42 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Erreur de syntaxe dans l'instruction SQL "create table t_chambre (bloc_id_bloc bigint, id_chambre bigint not null auto_increment, numero_chambre bigint, typec enum ('DOUBLE','SIMPLE','TRIPLE'), primary key (id_chambre)) engine[*]=InnoDB"; attendu "identifier"
+Syntax error in SQL statement "create table t_chambre (bloc_id_bloc bigint, id_chambre bigint not null auto_increment, numero_chambre bigint, typec enum ('DOUBLE','SIMPLE','TRIPLE'), primary key (id_chambre)) engine[*]=InnoDB"; expected "identifier"; SQL statement:
+create table t_chambre (bloc_id_bloc bigint, id_chambre bigint not null auto_increment, numero_chambre bigint, typec enum ('DOUBLE','SIMPLE','TRIPLE'), primary key (id_chambre)) engine=InnoDB [42001-214]
+2025-02-25 11:15:42 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Erreur de syntaxe dans l'instruction SQL "create table t_chambre_reservations (chambre_id_chambre bigint not null, reservations_id_reservation varchar(255) not null) engine[*]=InnoDB"; attendu "identifier"
+Syntax error in SQL statement "create table t_chambre_reservations (chambre_id_chambre bigint not null, reservations_id_reservation varchar(255) not null) engine[*]=InnoDB"; expected "identifier"; SQL statement:
+create table t_chambre_reservations (chambre_id_chambre bigint not null, reservations_id_reservation varchar(255) not null) engine=InnoDB [42001-214]
+2025-02-25 11:15:42 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Erreur de syntaxe dans l'instruction SQL "create table t_etudiant (date_naissance date, cin bigint not null, id_etudiant bigint not null auto_increment, ecole varchar(255), nom_et varchar(255), prenom_et varchar(255), primary key (id_etudiant)) engine[*]=InnoDB"; attendu "identifier"
+Syntax error in SQL statement "create table t_etudiant (date_naissance date, cin bigint not null, id_etudiant bigint not null auto_increment, ecole varchar(255), nom_et varchar(255), prenom_et varchar(255), primary key (id_etudiant)) engine[*]=InnoDB"; expected "identifier"; SQL statement:
+create table t_etudiant (date_naissance date, cin bigint not null, id_etudiant bigint not null auto_increment, ecole varchar(255), nom_et varchar(255), prenom_et varchar(255), primary key (id_etudiant)) engine=InnoDB [42001-214]
+2025-02-25 11:15:42 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Erreur de syntaxe dans l'instruction SQL "create table t_foyer (capacite_foyer bigint not null, id_foyer bigint not null auto_increment, nom_foyer varchar(255), primary key (id_foyer)) engine[*]=InnoDB"; attendu "identifier"
+Syntax error in SQL statement "create table t_foyer (capacite_foyer bigint not null, id_foyer bigint not null auto_increment, nom_foyer varchar(255), primary key (id_foyer)) engine[*]=InnoDB"; expected "identifier"; SQL statement:
+create table t_foyer (capacite_foyer bigint not null, id_foyer bigint not null auto_increment, nom_foyer varchar(255), primary key (id_foyer)) engine=InnoDB [42001-214]
+2025-02-25 11:15:42 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Erreur de syntaxe dans l'instruction SQL "create table t_reservation (annee_universitaire date, est_valide bit not null, id_reservation varchar(255) not null, primary key (id_reservation)) engine[*]=InnoDB"; attendu "identifier"
+Syntax error in SQL statement "create table t_reservation (annee_universitaire date, est_valide bit not null, id_reservation varchar(255) not null, primary key (id_reservation)) engine[*]=InnoDB"; expected "identifier"; SQL statement:
+create table t_reservation (annee_universitaire date, est_valide bit not null, id_reservation varchar(255) not null, primary key (id_reservation)) engine=InnoDB [42001-214]
+2025-02-25 11:15:42 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Erreur de syntaxe dans l'instruction SQL "create table t_reservation_etudiants (etudiants_id_etudiant bigint not null, reservations_id_reservation varchar(255) not null) engine[*]=InnoDB"; attendu "identifier"
+Syntax error in SQL statement "create table t_reservation_etudiants (etudiants_id_etudiant bigint not null, reservations_id_reservation varchar(255) not null) engine[*]=InnoDB"; expected "identifier"; SQL statement:
+create table t_reservation_etudiants (etudiants_id_etudiant bigint not null, reservations_id_reservation varchar(255) not null) engine=InnoDB [42001-214]
+2025-02-25 11:15:42 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Erreur de syntaxe dans l'instruction SQL "create table t_universite (foyer_id_foyer bigint, id_universite bigint not null auto_increment, adresse varchar(255), nom_universite varchar(255), primary key (id_universite)) engine[*]=InnoDB"; attendu "identifier"
+Syntax error in SQL statement "create table t_universite (foyer_id_foyer bigint, id_universite bigint not null auto_increment, adresse varchar(255), nom_universite varchar(255), primary key (id_universite)) engine[*]=InnoDB"; expected "identifier"; SQL statement:
+create table t_universite (foyer_id_foyer bigint, id_universite bigint not null auto_increment, adresse varchar(255), nom_universite varchar(255), primary key (id_universite)) engine=InnoDB [42001-214]
+2025-02-25 11:15:42 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_CHAMBRE" non trouvée
+Table "T_CHAMBRE" not found; SQL statement:
+alter table t_chambre add constraint UK_bfddkqmdeaegbdbk0q474to82 unique (numero_chambre) [42102-214]
+2025-02-25 11:15:42 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_CHAMBRE_RESERVATIONS" non trouvée
+Table "T_CHAMBRE_RESERVATIONS" not found; SQL statement:
+alter table t_chambre_reservations add constraint UK_tjokkk22md2kputl7s64mpogq unique (reservations_id_reservation) [42102-214]
+2025-02-25 11:15:42 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_UNIVERSITE" non trouvée
+Table "T_UNIVERSITE" not found; SQL statement:
+alter table t_universite add constraint UK_ppt7brh5iu3sdk26kydqxb4pb unique (foyer_id_foyer) [42102-214]
+2025-02-25 11:15:42 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_BLOC" non trouvée
+Table "T_BLOC" not found; SQL statement:
+alter table t_bloc add constraint FKjjwhlcwla3ys5yp36m0aqivdr foreign key (foyer_id_foyer) references t_foyer (id_foyer) [42102-214]
+2025-02-25 11:15:42 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_CHAMBRE" non trouvée
+Table "T_CHAMBRE" not found; SQL statement:
+alter table t_chambre add constraint FKhccfibngldb9t3wa06xg1qhfk foreign key (bloc_id_bloc) references t_bloc (id_bloc) [42102-214]
+2025-02-25 11:15:42 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_CHAMBRE_RESERVATIONS" non trouvée
+Table "T_CHAMBRE_RESERVATIONS" not found; SQL statement:
+alter table t_chambre_reservations add constraint FKcmffjxrqi7cnh819m0fddx65h foreign key (reservations_id_reservation) references t_reservation (id_reservation) [42102-214]
+2025-02-25 11:15:42 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_CHAMBRE_RESERVATIONS" non trouvée
+Table "T_CHAMBRE_RESERVATIONS" not found; SQL statement:
+alter table t_chambre_reservations add constraint FKfxbc8lgdbrm52ol9slhm11qy8 foreign key (chambre_id_chambre) references t_chambre (id_chambre) [42102-214]
+2025-02-25 11:15:42 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_RESERVATION_ETUDIANTS" non trouvée
+Table "T_RESERVATION_ETUDIANTS" not found; SQL statement:
+alter table t_reservation_etudiants add constraint FKsa01fwp72jakxi8b9soapl32w foreign key (etudiants_id_etudiant) references t_etudiant (id_etudiant) [42102-214]
+2025-02-25 11:15:42 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_RESERVATION_ETUDIANTS" non trouvée
+Table "T_RESERVATION_ETUDIANTS" not found; SQL statement:
+alter table t_reservation_etudiants add constraint FKko0c1l3ctx308jlueriyg90yc foreign key (reservations_id_reservation) references t_reservation (id_reservation) [42102-214]
+2025-02-25 11:15:42 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_UNIVERSITE" non trouvée
+Table "T_UNIVERSITE" not found; SQL statement:
+alter table t_universite add constraint FKl8ocoh5hm4gvsp0sqbk4dw4gp foreign key (foyer_id_foyer) references t_foyer (id_foyer) [42102-214]
+2025-02-25 11:15:44 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_CHAMBRE" not found (this database is empty); SQL statement:
+insert into t_chambre (bloc_id_bloc,numero_chambre,typec) values (?,?,?) [42104-214]
