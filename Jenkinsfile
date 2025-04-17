@@ -12,22 +12,26 @@ pipeline {
     }
 
     stages {
-          stage('Clean Workspace') {
+         stage('Clean Workspace') {
             steps {
                 cleanWs()
+                // Configuration Git globale
+                sh 'git config --global http.postBuffer 524288000'
             }
         }
-       stage('Checkout Code') {
-         
-    steps {
-        git branch: 'Mariemtl-clean',
-            credentialsId: 'TOKEN',
-            url: 'https://github.com/Miriama130/devop.git',
-            extensions: [[$class: 'GitLFSPull'], [$class: 'CloneOption', depth: 1, noTags: true, shallow: true]],
-            config: ['http.postBuffer': '524288000'] // Augmente la taille du buffer
         
-    }
-}
+        stage('Checkout Code') {
+            steps {
+                git(
+                    url: 'https://github.com/Miriama130/devop.git',
+                    credentialsId: 'TOKEN',
+                    branch: 'Mariemtl-clean'
+                )
+                
+                // Si vous avez besoin de Git LFS
+                sh 'git lfs pull'
+            }
+        }
 
         stage('Clean Docker Environment') {
     steps {
